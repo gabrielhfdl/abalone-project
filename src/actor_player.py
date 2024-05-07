@@ -39,18 +39,21 @@ class ActorPlayer(DogPlayerInterface):
 
         self.draw_board()
 
-        play_button = tk.Button(self.window, text="Jogar", bg="blue", fg="white", width=20, font=("Arial", 14, 'bold'), command=self.draw_players)
+        play_button = tk.Button(self.window, text="Jogar", bg="blue", fg="white", width=20, font=("Arial", 14, 'bold'), command=self.start_match)
         play_button.place(relx=0.5, rely=1.0, y=-20, anchor=tk.S)
+
+
 
         message = "Bem-vindo ao Abalone!"
         label = tk.Label(self.window, text=message, fg="black", font=("Arial", 12))
         label.place(x=10, y=10, anchor=tk.NW)
-
+        
+        #inicializando conexão com o DOG
         player_name = simpledialog.askstring(title="Player identification", prompt= "Olá, qual é o seu nome?")
         self.dog_server_interface = DogActor()
-        message = self.dog_server_interface.initialize(player_name, self)
-        
+        message = self.dog_server_interface.initialize(player_name, self)        
         messagebox.showinfo(message = message)
+
         self.window.mainloop()
 
     def draw_board(self):
@@ -85,5 +88,20 @@ class ActorPlayer(DogPlayerInterface):
                     position_y = (self.screen_height - (len(self.board) * (self.circle_size + self.circles_distance))) / 2 + i * (self.circle_size + self.circles_distance)
                     self.canvas.create_oval(position_x, position_y, position_x + self.circle_size, position_y + self.circle_size, fill="blue")
                     position_x += self.circle_size + self.circles_distance
+
+    def start_match(self):
+        start_status = self.dog_server_interface.start_match(2)
+        message = start_status.get_message()
+        messagebox.showinfo(message = message)
+    
+
+    def receive_start(self, start_status):
+        message = start_status.get_message()
+        messagebox.showinfo(message = message)
+
+
+    
+    def start_game(self):
+        print('start_game')
 
 ActorPlayer()
